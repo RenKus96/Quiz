@@ -1,0 +1,28 @@
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+      {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page=1{% if get_params %}&{{ get_params }}{% endif %}">&laquo; First</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if get_params %}&{{ get_params }}{% endif %}">Previous</a></li>
+      {% endif %}
+
+      {% for page_num in page_obj.paginator.page_range %}
+        {% if page_num == page_obj.number %}
+            <li class="page-item active"><a class="page-link" href="?page={{ page_num }}{% if get_params %}&{{ get_params }}{% endif %}">{{ page_num }}</a></li>
+        {% elif page_num > page_obj.number|add:-3 and page_num < page_obj.number|add:3 %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_num }}{% if get_params %}&{{ get_params }}{% endif %}">{{ page_num }}</a></li>
+        {% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if get_params %}&{{ get_params }}{% endif %}">Next</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if get_params %}&{{ get_params }}{% endif %}">Last &raquo;</a></li>
+      {% endif %}
+
+      <!--   -->
+
+      {#    #}
+
+      {# comment '' #}
+
+      {# endcomment #}
+  </ul>
+</nav>

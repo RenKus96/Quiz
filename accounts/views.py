@@ -36,3 +36,17 @@ def user_activate(request, sign):
         user.save()
 
     return render(request, template)
+
+
+class AccountLoginView(LoginView):
+    template_name = 'acconts/login.html'
+
+    def get_redirect_url(self):
+        if self.request.GET.get('next'):
+            return self.request.GET.get('next')
+        return reverse('index')
+
+class AccountLogoutView(LogoutView):
+    template_name = 'acconts/login.html'
+
+def accounts_profile_view(request):
