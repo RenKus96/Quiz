@@ -1,7 +1,7 @@
 from django.core.signing import BadSignature
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy, reverse
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
 from django.views.generic import CreateView, UpdateView, TemplateView
 from django.contrib.auth import get_user_model
 
@@ -36,3 +36,13 @@ def user_activate(request, sign):
         user.save()
 
     return render(request, template)
+
+class AccountPasswordChangeView(PasswordChangeView):
+    template_name = 'accounts/password_change.html'
+
+    def get_redirect_url(self):
+        param_next = self.request.GET.get('next')
+        if param_next:
+            return param_next
+
+        return reverse('password_change_done')
