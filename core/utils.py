@@ -1,4 +1,5 @@
 from uuid import uuid4
 
 
-def generate_
+def generate_uuid():
+    return uuid4().hex

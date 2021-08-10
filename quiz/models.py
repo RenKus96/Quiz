@@ -1,8 +1,9 @@
 from django.db import models
-from django.views.generic import ListView, DetailView
-
+from django.contrib.auth import get_user_model
 
 from core.models import BaseModel
+from core.utils import generate_uuid
+
 
 class Exam(BaseModel):
     QUESTION_MIN_LIMIT = 3
@@ -40,21 +41,16 @@ class Choice(models.Model):
     def __str__(self):
         return self.text
 
+
 class Result(BaseModel):
     class STATE(models.IntegerChoices):
         NEW = 0, "New"
         FINISHED = 1, "Finished"
 
     user = models.ForeignKey(get_user_model(), related_name='results', on_delete=models.CASCADE)
-    test = models.ForeignKey(Exam, related_name='results', on_delete=models.CASCADE)
+    exam = models.ForeignKey(Exam, related_name='results', on_delete=models.CASCADE)
     state = models.PositiveSmallIntegerField(default=STATE.NEW, choices=STATE.choices)
     uuid = models.UUIDField(default=generate_uuid, db_index=True, unique=True)
     current_order_number = models.PositiveSmallIntegerField(null=True)
     num_correct_answers = models.PositiveSmallIntegerField(default=0)
     num_incorrect_answers = models.PositiveSmallIntegerField(default=0)
-
-
-a, b = 1, 2
-a = 1, 2
-
-a = (5)

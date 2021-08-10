@@ -1,8 +1,10 @@
 from django.urls import path
 
-from .views import  account_profile_view, user_activate
-from .views import AccountLoginView, AccountLogoutView AccountUpdateProfileView, AccountRegistrationView,\
-    ccountRegistrationDoneView
+from .views import account_profile_view, user_activate
+from .views import AccountLoginView, AccountLogoutView, AccountUpdateProfileView, AccountRegistrationView, \
+    AccountRegistrationDoneView
+
+app_name = 'accounts'
 
 urlpatterns = [
     path('registration/асtivate/<str:sign>/', user_activate, name='register_activate'),
