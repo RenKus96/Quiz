@@ -140,4 +140,4 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-EMAIL_PORT = 1025
+EMAIL_PORT = 1030
