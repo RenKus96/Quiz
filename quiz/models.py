@@ -19,6 +19,9 @@ class Exam(BaseModel):
     description = models.TextField(null=True, blank=True)
     level = models.PositiveSmallIntegerField(choices=LEVEL.choices, default=LEVEL.BASIC)
 
+    def questions_count(self):
+        return self.questions.count()
+
     def __str__(self):
         return self.title
 
@@ -54,3 +57,24 @@ class Result(BaseModel):
     current_order_number = models.PositiveSmallIntegerField(null=True)
     num_correct_answers = models.PositiveSmallIntegerField(default=0)
     num_incorrect_answers = models.PositiveSmallIntegerField(default=0)
+
+    def update_result(self, order_number, question, selected_choices):
+        correct_choice = [choice.is_correct for choice in question.choices.all()]
+        correct_answer = True
+        for z in zip(selected_choices, correct_choice):
+            correct_answer &= (z[0] == z[1])
+
+        """
+            true    true        true
+            true    false       false
+            false   true        false
+            false   false       false
+        """
+
+        self.num_correct_answers += int(correct_answer)
+        self.num_incorrect_answers += 1 - int(correct_answer)
+
+        if order_number == question.exam.questions_count():
+            self.state = self.STATE.FINISHED
+
+        self.save()

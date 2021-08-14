@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Описание теста
+{% endblock %}
+
+{% block header %}
+    {{ question.text }}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <form method="post">
+            {% csrf_token %}
+            {{ choices.management_form }}
+{#            <div class="border-button mb-3">#}
+{#                Пожалуйста, выберите ОДИН правильный ответ:#}
+{#            </div>#}
+            {% for form in choices %}
+                <div class="mt-1">
+                    {{ form.is_selected }} <label for="{{ form.is_selected.id_for_label }}">
+                        {{ form.text.value }}
+                    </label>
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-success mt-5">Дальше ></button>
+        </form>
+    </div>
+{% endblock %}

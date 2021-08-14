@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Результат теста
+{% endblock %}
+
+{% block header %}
+    Результат теста: "{{ result.exam.title }}"
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <table class="table table-striped">
+                    <tbody>
+                        <tr>
+                            <td>Начат</td>
+                            <td>{{ result.create_timestamp }}</td>
+                        </tr>
+                        <tr>
+                            <td>Окончен</td>
+                            <td>{{ result.update_timestamp }}</td>
+                        </tr>
+                        <tr>
+                            <td>Пользователь</td>
+                            <td>{{ result.user }}</td>
+                        </tr>
+                        <tr>
+                            <td>Результат</td>
+                            <td>{{ result.num_correct_answers }} / {{ result.num_incorrect_answers }}</td>
+                        </tr>
+                    </tbody>
+              </table>
+            </div>
+        </div>
+        <div class="row">
+            <a class="btn btn-primary m-3" href="{% url 'quizzes:list' %}">Вернуться к списку тестов</a>
+        </div>
+    </div>
+{% endblock %}
