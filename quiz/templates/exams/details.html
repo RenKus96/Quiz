@@ -20,8 +20,8 @@
                         </tr>
                         <tr>
                             <td>Кол-во вопросов</td>
-                            <td>{{ exam.questions.count }}</td>
-{#                            <td>{{ exam.questions_count }}</td>#}
+{#                            <td>{{ exam.questions.count }}</td>#}
+                            <td>{{ exam.questions_count }}</td>
                         </tr>
                         <tr>
                             <td>Кол-во запусков</td>
@@ -44,7 +44,12 @@
             </div>
         </div>
         <div class="row">
-            <a class="btn btn-primary" href="{% url 'quizzes:list' %}">Вернуться к списку тестов</a>
+            <form action="{% url 'quizzes:result_create' exam.uuid %}" method="post"
+                  class="d-flex justify-content-center mt-5 mb-2">
+                {% csrf_token %}
+                <a class="btn btn-primary m-3" href="{% url 'quizzes:list' %}">Вернуться к списку тестов</a>
+                <input class="btn btn-success m-3" type="submit" value="СТАРТ >">
+            </form>
         </div>
     </div>
 {% endblock %}
