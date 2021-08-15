@@ -58,6 +58,12 @@ class Result(BaseModel):
     num_correct_answers = models.PositiveSmallIntegerField(default=0)
     num_incorrect_answers = models.PositiveSmallIntegerField(default=0)
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.state == Result.STATE.FINISHED:
+            self.user.raiting += self.scores_result()
+            self.user.save()
+
     def update_result(self, order_number, question, selected_choices):
         correct_choice = [choice.is_correct for choice in question.choices.all()]
         correct_answer = True
@@ -78,3 +84,13 @@ class Result(BaseModel):
             self.state = self.STATE.FINISHED
 
         self.save()
+
+    def time_result(self):
+        return self.update_timestamp - self.create_timestamp
+
+    def percent_correct_answers(self):
+        return (self.num_correct_answers / (self.num_incorrect_answers + self.num_correct_answers)) * 100
+
+    def scores_result(self):
+        scores = self.num_correct_answers - self.num_incorrect_answers
+        return scores if scores>0 else 0

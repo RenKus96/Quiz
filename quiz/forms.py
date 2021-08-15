@@ -24,6 +24,20 @@ class QuestionInlineFormSet(BaseInlineFormSet):
                 self.instance.QUESTION_MAX_LIMIT
             ))
 
+        order_num_set = [ form.cleaned_data['order_num'] for form in self.forms ]
+
+        if min(order_num_set) != 1:
+            raise ValidationError('Нумерация вопросов должна начинаться с 1.')
+
+        if max(order_num_set) != len(self.forms):
+            raise ValidationError('Максимальный порядковый номер вопроса не должен превышать кол-во вопросов в тесте.')
+
+        # Мы проверили минимальное и максимальное значение списка
+        # и теперь, в принципе, достаточно проверить, что бы значения не повторялись
+        if len(order_num_set) != len(set(order_num_set)):
+            raise ValidationError('Нарушен порядок нумерации вопросов.')
+
+
 
 class ChoiceForm(ModelForm):
     is_selected = forms.BooleanField(required=False)
