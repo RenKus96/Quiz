@@ -23,12 +23,24 @@
                             <td>{{ result.update_timestamp }}</td>
                         </tr>
                         <tr>
+                            <td>Время прохождения теста</td>
+                            <td>{{ result.time_result }}</td>
+                        </tr>
+                        <tr>
                             <td>Пользователь</td>
                             <td>{{ result.user }}</td>
                         </tr>
                         <tr>
                             <td>Результат</td>
                             <td>{{ result.num_correct_answers }} / {{ result.num_incorrect_answers }}</td>
+                        </tr>
+                        <tr>
+                            <td>Процент правильных ответов</td>
+                            <td>{{ result.percent_correct_answers|floatformat:0 }}</td>
+                        </tr>
+                        <tr>
+                            <td>Кол-во набранных баллов</td>
+                            <td>{{ result.scores_result }}</td>
                         </tr>
                     </tbody>
               </table>
