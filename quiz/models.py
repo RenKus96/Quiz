@@ -93,4 +93,4 @@ class Result(BaseModel):
 
     def scores_result(self):
         scores = self.num_correct_answers - self.num_incorrect_answers
-        return scores if scores>0 else 0
+        return scores if scores > 0 else 0
