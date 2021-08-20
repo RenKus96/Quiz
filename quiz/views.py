@@ -20,6 +20,7 @@ class ExamDetailView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
     template_name = 'exams/details.html'
     context_object_name = 'exam'
     pk_url_kwarg = 'uuid'
+    paginate_by = 5
 
     def get_object(self, queryset=None):
         uuid = self.kwargs.get('uuid')
@@ -42,13 +43,15 @@ class ExamDetailView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
             user=self.request.user
         ).order_by('state')
 
+
 class ExamResultCreateView(LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):
         uuid = kwargs.get('uuid')
         result = Result.objects.create(
             user=request.user,
             exam=Exam.objects.get(uuid=uuid),
-            state=Result.STATE.NEW
+            state=Result.STATE.NEW,
+            current_order_number = 0
         )
 
         result.save()
@@ -58,7 +61,7 @@ class ExamResultCreateView(LoginRequiredMixin, CreateView):
             kwargs={
                 'uuid': uuid,
                 'result_uuid': result.uuid,
-                'order_number': 1,
+                # 'order_number': 1,
             }
         ))
 
@@ -66,11 +69,13 @@ class ExamResultCreateView(LoginRequiredMixin, CreateView):
 class ExamQuestionView(LoginRequiredMixin, UpdateView):
     def get(self, request, *args, **kwargs):
         uuid = kwargs.get('uuid')
-        order_number = kwargs.get('order_number')
+        # order_number = kwargs.get('order_number')
+        result = Result.objects.get(uuid=kwargs['result_uuid'])
 
         question = Question.objects.get(
             exam__uuid=uuid,
-            order_num=order_number
+            # order_num=order_number
+            order_num=result.current_order_number + 1
         )
 
         choices = ChoicesFormset(queryset=question.choices.all())
@@ -87,7 +92,9 @@ class ExamQuestionView(LoginRequiredMixin, UpdateView):
     def post(self, request, *args, **kwargs):
         uuid = kwargs.get('uuid')
         result_uuid = kwargs.get('result_uuid')
-        order_number = kwargs.get('order_number')
+        result = Result.objects.get(uuid=result_uuid)
+        # order_number = kwargs.get('order_number')
+        order_number = result.current_order_number + 1
 
         question = Question.objects.get(
             exam__uuid=uuid,
@@ -114,7 +121,7 @@ class ExamQuestionView(LoginRequiredMixin, UpdateView):
             kwargs={
                 'uuid': uuid,
                 'result_uuid': result.uuid,
-                'order_number': order_number + 1,
+                # 'order_number': order_number + 1,
             }
         ))
 
@@ -146,6 +153,6 @@ class ExamResultUpdateView(LoginRequiredMixin, UpdateView):
             kwargs={
                 'uuid': uuid,
                 'result_uuid': result.uuid,
-                'order_number': result.current_order_number + 1,
+                # 'order_number': result.current_order_number + 1,
             }
         ))

@@ -10,7 +10,7 @@
 
 {% block content %}
     <div class="container">
-        <form method="post">
+        <form method="post" autocomplete="off">
             {% csrf_token %}
             {{ choices.management_form }}
 {#            <div class="border-button mb-3">#}
