@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.list import MultipleObjectMixin
 
 from .models import Exam, Question, Result
 from .forms import ChoicesFormset
@@ -14,7 +15,7 @@ class ExamListView(LoginRequiredMixin, ListView):
     context_object_name = 'exams'
 
 
-class ExamDetailView(LoginRequiredMixin, DetailView):
+class ExamDetailView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
     model = Exam
     template_name = 'exams/details.html'
     context_object_name = 'exam'
@@ -22,8 +23,24 @@ class ExamDetailView(LoginRequiredMixin, DetailView):
 
     def get_object(self, queryset=None):
         uuid = self.kwargs.get('uuid')
-        return self.get_queryset().get(uuid=uuid)
+        # return self.get_queryset().get(uuid=uuid)
+        return self.model.objects.get(uuid=uuid)
 
+    def get_context_data(self, **kwargs):
+        # context = super().get_context_data(**kwargs)
+        # context['result_list'] = Result.objects.filter(
+        #     exam=self.get_object(),
+        #     user=self.request.user
+        # ).order_by('state')
+        context = super().get_context_data(object_list=self.get_queryset(), **kwargs)
+
+        return context
+
+    def get_queryset(self):
+        return Result.objects.filter(
+            exam=self.get_object(),
+            user=self.request.user
+        ).order_by('state')
 
 class ExamResultCreateView(LoginRequiredMixin, CreateView):
     def post(self, request, *args, **kwargs):

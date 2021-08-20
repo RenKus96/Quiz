@@ -92,5 +92,6 @@ class Result(BaseModel):
         return (self.num_correct_answers / (self.num_incorrect_answers + self.num_correct_answers)) * 100
 
     def scores_result(self):
-        scores = self.num_correct_answers - self.num_incorrect_answers
-        return scores if scores > 0 else 0
+        # scores = self.num_correct_answers - self.num_incorrect_answers
+        # return scores if scores > 0 else 0
+        return max(0, self.num_correct_answers - self.num_incorrect_answers)
