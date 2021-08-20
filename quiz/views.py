@@ -128,3 +128,24 @@ class ExamResultDetailView(LoginRequiredMixin, DetailView):
     def get_object(self, queryset=None):
         uuid = self.kwargs.get('result_uuid')
         return self.get_queryset().get(uuid=uuid)
+
+
+class ExamResultUpdateView(LoginRequiredMixin, UpdateView):
+    def get(self, request, *args, **kwargs):
+        uuid = kwargs['uuid']
+        result_uuid = kwargs['result_uuid']
+        user = request.user
+
+        result = Result.objects.get(
+            user=user,
+            uuid=result_uuid
+        )
+
+        return HttpResponseRedirect(reverse(
+            'quizzes:question',
+            kwargs={
+                'uuid': uuid,
+                'result_uuid': result.uuid,
+                'order_number': result.current_order_number + 1,
+            }
+        ))

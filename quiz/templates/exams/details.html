@@ -66,16 +66,16 @@
             <tr>
                 <td>{{ forloop.counter }}</td>
                 <td>{{ result.create_timestamp }}</td>
-                <td>{{ result.points }}</td>
+                <td>{{ result.scores_result }}</td>
                 <td>{{ result.get_state_display }}</td>
                 <td>
                     {% if result.state == result.STATE.NEW %}
-                        <a class="btn btn-warning" href="{% url 'quizzes:result_update' exam.uuid result.uuid %}">
+                        <a class="btn btn-warning btn-sm" href="{% url 'quizzes:result_update' exam.uuid result.uuid %}">
                             Продолжить
                         </a>
-                        <a class="btn btn-danger" href="#">Удалить</a>
+                        <a class="btn btn-danger btn-sm" href="#">Удалить</a>
                     {% else %}
-                        <a class="btn btn-success" href="{% url 'quizzes:result_details' exam.uuid result.uuid  %}">
+                        <a class="btn btn-success btn-sm" href="{% url 'quizzes:result_details' exam.uuid result.uuid  %}">
                             Посмотреть
                         </a>
                     {% endif %}
