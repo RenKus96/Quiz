@@ -1,16 +1,25 @@
 {% extends 'base.html' %}
 
+{% load custom_tags %}
+
 {% block title %}
     Описание теста
 {% endblock %}
 
 {% block header %}
     <b>{{ question.order_num }}</b>. {{ question.text }}
+{#    {% with question.order_num|add:-1|multi:100|dived:question.exam.questions_count as progress_level %}#}
+    {% expression '(%1 - 1) * 100 // %2' question.order_num question.exam.questions_count as progress_level %}
+    <div class="progress">
+      <div class="progress-bar" role="progressbar" style="width: {{ progress_level }}%"
+           aria-valuenow="{{ progress_level }}" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+{#    {% endwith %}#}
 {% endblock %}
 
 {% block content %}
     <div class="container">
-        <form method="post">
+        <form method="post" autocomplete="off">
             {% csrf_token %}
             {{ choices.management_form }}
 {#            <div class="border-button mb-3">#}

@@ -79,6 +79,7 @@ class Result(BaseModel):
 
         self.num_correct_answers += int(correct_answer)
         self.num_incorrect_answers += 1 - int(correct_answer)
+        self.current_order_number = order_number
 
         if order_number == question.exam.questions_count():
             self.state = self.STATE.FINISHED
@@ -92,5 +93,6 @@ class Result(BaseModel):
         return (self.num_correct_answers / (self.num_incorrect_answers + self.num_correct_answers)) * 100
 
     def scores_result(self):
-        scores = self.num_correct_answers - self.num_incorrect_answers
-        return scores if scores>0 else 0
+        # scores = self.num_correct_answers - self.num_incorrect_answers
+        # return scores if scores > 0 else 0
+        return max(0, self.num_correct_answers - self.num_incorrect_answers)
