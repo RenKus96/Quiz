@@ -65,7 +65,11 @@
 {#            {% for result in result_list %}#}
             {% for result in object_list %}
             <tr>
-                <td>{{ forloop.counter }}</td>
+                {% if is_paginated %}
+                    <td><b>{{ forloop.counter0|add:page_obj.start_index }}</b></td>
+                {% else %}
+                    <td><b>{{ forloop.counter }}</b></td>
+                {% endif %}
                 <td>{{ result.create_timestamp }}</td>
                 <td>{{ result.scores_result }}</td>
                 <td>{{ result.get_state_display }}</td>
@@ -75,7 +79,9 @@
                         <a class="btn btn-warning btn-sm" href="{% url 'quizzes:result_update' exam.uuid result.uuid %}">
                             Продолжить
                         </a>
-                        <a class="btn btn-danger btn-sm" href="#">Удалить</a>
+                        <a class="btn btn-danger btn-sm" href="{% url 'quizzes:result_delete' exam.uuid result.uuid %}">
+                            Удалить
+                        </a>
                     {% else %}
                         <a class="btn btn-success btn-sm" href="{% url 'quizzes:result_details' exam.uuid result.uuid %}">
                             Посмотреть

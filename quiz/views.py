@@ -1,7 +1,8 @@
+from django.urls import reverse_lazy
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.list import MultipleObjectMixin
 
@@ -156,3 +157,25 @@ class ExamResultUpdateView(LoginRequiredMixin, UpdateView):
                 # 'order_number': result.current_order_number + 1,
             }
         ))
+
+
+class ExamResultDeleteView(LoginRequiredMixin, DeleteView):
+    model = Result
+    # success_url = reverse_lazy('quizzes:details')
+    template_name = 'results/delete.html'
+    context_object_name = 'result'
+    pk_url_kwarg = 'uuid'
+
+    def get_object(self, queryset=None):
+        uuid = self.kwargs.get('result_uuid')
+        return self.get_queryset().get(uuid=uuid)
+
+    def get_success_url(self):
+        success_url = reverse_lazy(
+            'quizzes:details',
+            kwargs={
+                'uuid': self.kwargs.get('uuid'),
+            }
+        )
+        return success_url
+
