@@ -14,6 +14,7 @@ class ExamListView(LoginRequiredMixin, ListView):
     model = Exam
     template_name = 'exams/list.html'
     context_object_name = 'exams'
+    paginate_by = 5
 
 
 class ExamDetailView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
@@ -184,3 +185,12 @@ class ExamResultDeleteView(LoginRequiredMixin, DeleteView):
         )
         return success_url
 
+
+class ResultListView(LoginRequiredMixin, ListView):
+    model = Result
+    template_name = 'results/list.html'
+    context_object_name = 'results'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return  self.model.objects.filter(user=self.request.user).order_by('state')

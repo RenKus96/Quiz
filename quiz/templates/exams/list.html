@@ -30,9 +30,11 @@
             {% endfor %}
             </tbody>
         </table>
-        <div class="p-1 m-1">
-            {% include 'includes/pagination.html' %}
-        </div>
+        {% if is_paginated %}
+            <div class="p-1 m-1">
+                {% include 'includes/pagination.html' %}
+            </div>
+        {% endif %}
     {% else %}
         <p>Тестов ещё нет здесь!</p>
     {% endif %}
