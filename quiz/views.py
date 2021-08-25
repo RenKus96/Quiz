@@ -1,7 +1,7 @@
-from django.urls import reverse_lazy
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.list import MultipleObjectMixin
@@ -105,17 +105,22 @@ class ExamQuestionView(LoginRequiredMixin, UpdateView):
         choices = ChoicesFormset(data=request.POST)
         selected_choices = ['is_selected' in form.changed_data for form in choices.forms]
 
-        result = Result.objects.get(uuid=result_uuid)
-        result.update_result(order_number, question, selected_choices)
+        if not any(selected_choices):
+            messages.error(self.request, f'Заполните хотя бы один ответ')
+        elif all(selected_choices):
+            messages.error(self.request, f'Все варианты ответов не могут быть правильными')
+        else:
+            result = Result.objects.get(uuid=result_uuid)
+            result.update_result(order_number, question, selected_choices)
 
-        if result.state == Result.STATE.FINISHED:
-            return HttpResponseRedirect(reverse(
-                'quizzes:result_details',
-                kwargs={
-                    'uuid': uuid,
-                    'result_uuid': result.uuid,
-                }
-            ))
+            if result.state == Result.STATE.FINISHED:
+                return HttpResponseRedirect(reverse(
+                    'quizzes:result_details',
+                    kwargs={
+                        'uuid': uuid,
+                        'result_uuid': result.uuid,
+                    }
+                ))
 
         return HttpResponseRedirect(reverse(
             'quizzes:question',

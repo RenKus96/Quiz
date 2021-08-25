@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
 
+{% load custom_tags %}
+
 {% block title %}
     Результат теста
 {% endblock %}
 
 {% block header %}
     Результат теста: "{{ result.exam.title }}"
-    <div class="progress">
+    <div class="progress m-2" style="height: 25px;">
       <div class="progress-bar" role="progressbar" style="width: 100%"
-           aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+           aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"><font size="4">100%</font></div>
     </div>
 {% endblock %}
 
@@ -40,7 +42,25 @@
                         </tr>
                         <tr>
                             <td>Процент правильных ответов</td>
-                            <td>{{ result.percent_correct_answers|floatformat:0 }}</td>
+                            <td>
+                                <div class="progress" style="height: 20px;">
+                                    <div class="progress-bar bg-success" role="progressbar"
+                                         style="width: {{ result.percent_correct_answers|floatformat:0 }}%"
+                                         aria-valuenow="{{ result.percent_correct_answers|floatformat:0 }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                        <font size="4">{{ result.percent_correct_answers|floatformat:0 }}%</font>
+                                    </div>
+                                    {% expression '100 - %1' result.percent_correct_answers|floatformat:0 as percent_incorrect_answers %}
+                                    <div class="progress-bar bg-danger" role="progressbar"
+                                         style="width: {{ percent_incorrect_answers }}%"
+                                         aria-valuenow="{{ percent_incorrect_answers }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                        <font size="4">{{ percent_incorrect_answers }}%</font>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
                             <td>Кол-во набранных баллов</td>
@@ -51,7 +71,7 @@
             </div>
         </div>
         <div class="row">
-            <a class="btn btn-primary m-3" href="{% url 'quizzes:list' %}">Вернуться к списку тестов</a>
+            <a class="btn btn-primary m-3" href="{% url 'quizzes:details' uuid=result.exam.uuid %}">Вернуться к тесту</a>
         </div>
     </div>
 {% endblock %}
