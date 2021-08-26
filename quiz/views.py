@@ -193,4 +193,4 @@ class ResultListView(LoginRequiredMixin, ListView):
     paginate_by = 10
 
     def get_queryset(self):
-        return  self.model.objects.filter(user=self.request.user).order_by('state')
+        return self.model.objects.filter(user=self.request.user).order_by('state')

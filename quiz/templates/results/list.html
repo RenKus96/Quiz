@@ -44,6 +44,9 @@
                         <a class="btn btn-success btn-sm" href="{% url 'quizzes:result_details' result.exam.uuid result.uuid %}">
                             Посмотреть
                         </a>
+                        <a class="btn btn-danger btn-sm" href="{% url 'quizzes:result_delete' result.exam.uuid result.uuid %}">
+                            Удалить
+                        </a>
                     {% endif %}
                 </td>
             </tr>

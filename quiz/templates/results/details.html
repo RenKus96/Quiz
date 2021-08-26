@@ -71,17 +71,7 @@
             </div>
         </div>
         <div class="row">
-            {% url 'quizzes:question' uuid=result.exam.uuid result_uuid=result.uuid as url_back %}
-            {{request.META.HTTP_REFERER}}
-            <br>
-            {{url_back}}
-            <br>
-            {{request.META.REQUEST_METHOD }}
-            {% if request.META.HTTP_REFERER == url_back %}
                 <a class="btn btn-primary m-3" href="{% url 'quizzes:details' uuid=result.exam.uuid %}">Вернуться к тесту</a>
-            {% else %}
-                <a class="btn btn-primary m-3" href="{{request.META.HTTP_REFERER}}">Вернуться назад{{ from_question }}</a>
-            {% endif %}
         </div>
     </div>
 {% endblock %}
