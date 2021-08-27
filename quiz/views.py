@@ -1,7 +1,8 @@
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.list import MultipleObjectMixin
 
@@ -13,6 +14,7 @@ class ExamListView(LoginRequiredMixin, ListView):
     model = Exam
     template_name = 'exams/list.html'
     context_object_name = 'exams'
+    paginate_by = 5
 
 
 class ExamDetailView(LoginRequiredMixin, DetailView, MultipleObjectMixin):
@@ -104,17 +106,22 @@ class ExamQuestionView(LoginRequiredMixin, UpdateView):
         choices = ChoicesFormset(data=request.POST)
         selected_choices = ['is_selected' in form.changed_data for form in choices.forms]
 
-        result = Result.objects.get(uuid=result_uuid)
-        result.update_result(order_number, question, selected_choices)
+        if not any(selected_choices):
+            messages.error(self.request, f'Заполните хотя бы один ответ')
+        elif all(selected_choices):
+            messages.error(self.request, f'Все варианты ответов не могут быть правильными')
+        else:
+            result = Result.objects.get(uuid=result_uuid)
+            result.update_result(order_number, question, selected_choices)
 
-        if result.state == Result.STATE.FINISHED:
-            return HttpResponseRedirect(reverse(
-                'quizzes:result_details',
-                kwargs={
-                    'uuid': uuid,
-                    'result_uuid': result.uuid,
-                }
-            ))
+            if result.state == Result.STATE.FINISHED:
+                return HttpResponseRedirect(reverse(
+                    'quizzes:result_details',
+                    kwargs={
+                        'uuid': uuid,
+                        'result_uuid': result.uuid,
+                    }
+                ))
 
         return HttpResponseRedirect(reverse(
             'quizzes:question',
@@ -156,3 +163,34 @@ class ExamResultUpdateView(LoginRequiredMixin, UpdateView):
                 # 'order_number': result.current_order_number + 1,
             }
         ))
+
+
+class ExamResultDeleteView(LoginRequiredMixin, DeleteView):
+    model = Result
+    # success_url = reverse_lazy('quizzes:details')
+    template_name = 'results/delete.html'
+    context_object_name = 'result'
+    pk_url_kwarg = 'uuid'
+
+    def get_object(self, queryset=None):
+        uuid = self.kwargs.get('result_uuid')
+        return self.get_queryset().get(uuid=uuid)
+
+    def get_success_url(self):
+        success_url = reverse_lazy(
+            'quizzes:details',
+            kwargs={
+                'uuid': self.kwargs.get('uuid'),
+            }
+        )
+        return success_url
+
+
+class ResultListView(LoginRequiredMixin, ListView):
+    model = Result
+    template_name = 'results/list.html'
+    context_object_name = 'results'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return self.model.objects.filter(user=self.request.user).order_by('state')

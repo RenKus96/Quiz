@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Удаление результата
+{% endblock %}
+
+{% block header %}
+    Удаление результата теста: "{{ result.exam.title }}"
+{% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <p>Вы уверены, что хотите удалить результат теста  "{{ result.exam.title }}" от {{ result.create_timestamp }}?</p>
+    <input class="btn btn-danger" type="submit" value="Удалить">
+    <a class="btn btn-primary" href="{{request.META.HTTP_REFERER}}">Отмена</a>
+</form>
+{% endblock %}
