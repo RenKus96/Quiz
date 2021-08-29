@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic.list import MultipleObjectMixin
 
 from .models import Exam, Question, Result
@@ -144,7 +144,9 @@ class ExamResultDetailView(LoginRequiredMixin, DetailView):
         return self.get_queryset().get(uuid=uuid)
 
 
-class ExamResultUpdateView(LoginRequiredMixin, UpdateView):
+class ExamResultUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    # permission_required = ['accounts.view_statistics']
+
     def get(self, request, *args, **kwargs):
         uuid = kwargs['uuid']
         result_uuid = kwargs['result_uuid']
